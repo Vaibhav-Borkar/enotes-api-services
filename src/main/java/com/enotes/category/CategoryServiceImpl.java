@@ -2,6 +2,7 @@ package com.enotes.category;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
@@ -33,15 +34,36 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public List<CategoryDTO> getAllCategory() {
-		List<Category> allCategories = categoryRepo.findAll();
+		List<Category> allCategories = categoryRepo.findByIsDeletedFalse();
 		List<CategoryDTO> list = allCategories.stream().map(cat-> mapper.map(cat, CategoryDTO.class)).toList();
 		return list;
 	}
 
 	@Override
 	public List<CategoryResponse> getAllActiveCategory() {
-		List<Category> categories = categoryRepo.findByIsActiveTrue();
+		List<Category> categories = categoryRepo.findByIsActiveTrueAndIsDeletedFalse();
 		return categories.stream().map(cat->mapper.map(cat,CategoryResponse.class)).toList();
+	}
+
+	@Override
+	public CategoryDTO getCategoryById(Integer categoryId) {
+		Optional<Category> category = categoryRepo.findByIdAndIsDeletedFalse(categoryId);
+		if (category.isPresent()) {
+			return mapper.map(category.get(), CategoryDTO.class);
+		}
+		return null;
+	}
+
+	@Override
+	public Boolean deletecCategoryById(Integer categoryId) {
+		Optional<Category> category = categoryRepo.findById(categoryId);
+		if (category.isPresent()) {
+			Category presentedCategory = category.get(); 
+			presentedCategory.setIsDeleted(true);
+			categoryRepo.save(presentedCategory);
+			return true;
+		}
+		return false;
 	}
 
 }
