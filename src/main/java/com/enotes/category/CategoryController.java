@@ -22,7 +22,7 @@ public class CategoryController {
 	
 	
 	@PostMapping
-	public ResponseEntity<?> saveCategoryHandler(@RequestBody Category category) {
+	public ResponseEntity<?> saveCategoryHandler(@RequestBody CategoryDTO category) {
 		Boolean saveCategory = categoryService.saveCategory(category);
 		if(saveCategory) {
 			return new ResponseEntity<>("saved success",HttpStatus.CREATED);
@@ -32,11 +32,20 @@ public class CategoryController {
 	
 	@GetMapping
 	public ResponseEntity<?> getAllCategoryHandler(){
-		List<Category> allCategory = categoryService.getAllCategory();
+		List<CategoryDTO> allCategory = categoryService.getAllCategory();
 		if(CollectionUtils.isEmpty(allCategory)) {
 			return ResponseEntity.noContent().build();
 		}
 		return new ResponseEntity<>(allCategory,HttpStatus.OK);
+	}
+	
+	@GetMapping("/active-category")
+	public ResponseEntity<?> getActiveCategoryHandler(){
+		List<CategoryResponse> allActiveCategories=categoryService.getAllActiveCategory();
+		if(CollectionUtils.isEmpty(allActiveCategories)) {
+			return ResponseEntity.noContent().build();
+		}
+		return new ResponseEntity<>(allActiveCategories,HttpStatus.OK);
 	}
 }
 

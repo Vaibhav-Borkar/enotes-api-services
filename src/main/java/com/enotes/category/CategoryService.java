@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 public interface CategoryService {
 
-	Boolean saveCategory(Category catergory);
+	Boolean saveCategory(CategoryDTO catergoryDTO);
 	
-	List<Category> getAllCategory();
+	List<CategoryDTO> getAllCategory();
+
+	List<CategoryResponse> getAllActiveCategory();
 }

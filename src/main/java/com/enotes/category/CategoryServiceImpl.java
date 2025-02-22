@@ -3,6 +3,7 @@ package com.enotes.category;
 import java.util.Date;
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -13,9 +14,13 @@ import lombok.AllArgsConstructor;
 public class CategoryServiceImpl implements CategoryService {
 
 	private final CategoryRepository categoryRepo;
+	private final ModelMapper mapper;
 
 	@Override
-	public Boolean saveCategory(Category category) {
+	public Boolean saveCategory(CategoryDTO categoryDto) {
+		
+		Category category = mapper.map(categoryDto,Category.class);
+		
 		category.setIsDeleted(false);
 		category.setCreatedBy(1);
 		category.setCreatedOn(new Date());
@@ -27,9 +32,16 @@ public class CategoryServiceImpl implements CategoryService {
 	}
 
 	@Override
-	public List<Category> getAllCategory() {
-		List<Category> allCategory = categoryRepo.findAll();
-		return allCategory;
+	public List<CategoryDTO> getAllCategory() {
+		List<Category> allCategories = categoryRepo.findAll();
+		List<CategoryDTO> list = allCategories.stream().map(cat-> mapper.map(cat, CategoryDTO.class)).toList();
+		return list;
+	}
+
+	@Override
+	public List<CategoryResponse> getAllActiveCategory() {
+		List<Category> categories = categoryRepo.findByIsActiveTrue();
+		return categories.stream().map(cat->mapper.map(cat,CategoryResponse.class)).toList();
 	}
 
 }
