@@ -5,7 +5,10 @@ import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,6 +49,25 @@ public class CategoryController {
 			return ResponseEntity.noContent().build();
 		}
 		return new ResponseEntity<>(allActiveCategories,HttpStatus.OK);
+	}
+	
+	
+	@GetMapping("/{categoryId}")
+	public ResponseEntity<?> getCategoryByIdHandler(@PathVariable Integer categoryId){
+		CategoryDTO categoryDto= categoryService.getCategoryById(categoryId);
+		if(ObjectUtils.isEmpty(categoryDto)) {
+			return new ResponseEntity<>("category not found with id : "+categoryId,HttpStatus.NOT_FOUND);
+		}
+		return new ResponseEntity<>(categoryDto,HttpStatus.OK);
+	}
+	
+	@DeleteMapping("/{categoryId}")
+	public ResponseEntity<?> deleteCategoryByIdHandler(@PathVariable Integer categoryId){
+		Boolean deletedCategory = categoryService.deletecCategoryById(categoryId);
+		if(deletedCategory) {
+			return new ResponseEntity<>("category deleted success"+categoryId,HttpStatus.OK);
+		}
+		return new ResponseEntity<>("category not deleted ",HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
 
