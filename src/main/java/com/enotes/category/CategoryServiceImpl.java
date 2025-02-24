@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
 import com.enotes.exception.ResourceNotFoundException;
+import com.enotes.utils.Validation;
 
 import lombok.AllArgsConstructor;
 
@@ -18,9 +19,13 @@ public class CategoryServiceImpl implements CategoryService {
 
 	private final CategoryRepository categoryRepo;
 	private final ModelMapper mapper;
+	private final Validation validation;
 
 	@Override
 	public Boolean saveCategory(CategoryDTO categoryDto) {
+		
+		//Validation checking..
+		validation.categoryValidation(categoryDto);
 		
 		Category category = mapper.map(categoryDto,Category.class);
 		
