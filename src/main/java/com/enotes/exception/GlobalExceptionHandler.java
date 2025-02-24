@@ -25,18 +25,21 @@ public class GlobalExceptionHandler {
 	
 	@ExceptionHandler(NullPointerException.class)
 	public ResponseEntity<?> handleNullPointerException(Exception e){
+		log.info("NullPointerException :: handleNullPointerException");
 		return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 	
 	@ExceptionHandler(ResourceNotFoundException.class)
 	public ResponseEntity<?> handleResourceNotFoundException(Exception e){
+		log.info("ResourceNotFoundException :: handleResourceNotFoundException");
 		return new ResponseEntity<>(e.getMessage(),HttpStatus.NOT_FOUND);
 	}
 	
 	
-//	@ExceptionHandler(InternalServerError.class)
-//	public ResponseEntity<?> handleInternalServerError(Exception e){
-//		return new ResponseEntity<>(e.getMessage(),HttpStatus.INTERNAL_SERVER_ERROR);
-//	}
+	@ExceptionHandler(ValidationException.class)
+	public ResponseEntity<?> handleValidationException(ValidationException e){
+		log.info("ValidationException :: handleValidationException()");
+		return new ResponseEntity<>(e.getErrors(),HttpStatus.BAD_REQUEST);
+	}
 	
 }
