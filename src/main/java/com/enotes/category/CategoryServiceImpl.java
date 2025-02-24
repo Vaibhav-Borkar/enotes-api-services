@@ -66,4 +66,19 @@ public class CategoryServiceImpl implements CategoryService {
 		return false;
 	}
 
+	@Override
+	public Boolean updateCategory(Integer categoryId, CategoryDTO categoryDto) {
+	Optional<Category> category = categoryRepo.findById(categoryId);
+	if (category.isPresent()) {
+		Category categoryObj = category.get();
+		categoryObj.setName(categoryDto.getName());
+		categoryObj.setUpdatedOn(new Date());
+		categoryObj.setDescription(categoryDto.getDescription());
+		categoryObj.setUpdatedBy(1);
+		categoryRepo.save(categoryObj);
+		return true;
+	}
+		return false;
+	}
+
 }

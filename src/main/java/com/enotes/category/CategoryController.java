@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,6 +69,16 @@ public class CategoryController {
 			return new ResponseEntity<>("category deleted success"+categoryId,HttpStatus.OK);
 		}
 		return new ResponseEntity<>("category not deleted ",HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	
+	
+	@PutMapping("/{categoryId}")
+	public ResponseEntity<?> updateCategoryHandler(@RequestBody CategoryDTO categoryDto, @PathVariable Integer categoryId){
+		Boolean updatedCategory = categoryService.updateCategory(categoryId,categoryDto);
+		if(updatedCategory) {
+			return new ResponseEntity<>("update success",HttpStatus.OK);
+		}
+		return new ResponseEntity<>("category not found with id : "+categoryId,HttpStatus.NOT_FOUND);
 	}
 }
 
