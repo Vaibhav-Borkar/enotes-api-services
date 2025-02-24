@@ -8,6 +8,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.enotes.exception.ResourceNotFoundException;
+
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
@@ -47,9 +49,9 @@ public class CategoryServiceImpl implements CategoryService {
 
 	@Override
 	public CategoryDTO getCategoryById(Integer categoryId) {
-		Optional<Category> category = categoryRepo.findByIdAndIsDeletedFalse(categoryId);
-		if (category.isPresent()) {
-			return mapper.map(category.get(), CategoryDTO.class);
+		Category category = categoryRepo.findByIdAndIsDeletedFalse(categoryId).orElseThrow(()-> new ResourceNotFoundException("Category not found with ide :"+categoryId));
+		if (!ObjectUtils.isEmpty(category) ) {
+			return mapper.map(category, CategoryDTO.class);
 		}
 		return null;
 	}
