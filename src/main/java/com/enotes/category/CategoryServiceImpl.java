@@ -30,8 +30,8 @@ public class CategoryServiceImpl implements CategoryService {
 		Category category = mapper.map(categoryDto,Category.class);
 		
 		category.setIsDeleted(false);
-		category.setCreatedBy(1);
-		category.setCreatedOn(new Date());
+//		category.setCreatedBy(1);
+//		category.setCreatedOn(new Date());
 		Category saveCategory = categoryRepo.save(category);
 		if (ObjectUtils.isEmpty(saveCategory)) {
 			return false;
@@ -81,7 +81,8 @@ public class CategoryServiceImpl implements CategoryService {
 		categoryObj.setName(categoryDto.getName());
 		categoryObj.setUpdatedOn(new Date());
 		categoryObj.setDescription(categoryDto.getDescription());
-		categoryObj.setUpdatedBy(1);
+//		categoryObj.setUpdatedBy(1);
+//		categoryObj.setUpdatedOn(new Date());
 		categoryRepo.save(categoryObj);
 		return true;
 	}
