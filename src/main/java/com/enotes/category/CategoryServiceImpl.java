@@ -8,6 +8,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import com.enotes.exception.DataExistsException;
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.utils.Validation;
 
@@ -26,6 +27,12 @@ public class CategoryServiceImpl implements CategoryService {
 		
 		//Validation checking..
 		validation.categoryValidation(categoryDto);
+		
+		// Check the category already presented or not..
+		Boolean exist=categoryRepo.existsByName(categoryDto.getName().trim());
+		if (exist) {
+			throw new DataExistsException("category already exists with name "+categoryDto.getName());
+		}
 		
 		Category category = mapper.map(categoryDto,Category.class);
 		
