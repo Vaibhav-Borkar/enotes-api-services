@@ -21,7 +21,7 @@ public class CategoryDTO {
 	
 	private Boolean isActive;
 
-	private Boolean isDeleted;
+//	private Boolean isDeleted;
 
 	private Integer createdBy;
 
