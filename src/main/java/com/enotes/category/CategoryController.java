@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.enotes.utils.CommonUtil;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
@@ -32,9 +34,11 @@ public class CategoryController {
 		log.info("CategoryController :: saveCategoryHandler");
 		Boolean saveCategory = categoryService.saveCategory(category);
 		if(saveCategory) {
-			return new ResponseEntity<>("saved success",HttpStatus.CREATED);
+//			return new ResponseEntity<>("saved success",HttpStatus.CREATED);
+			return CommonUtil.createBuildResponse("saved success", HttpStatus.CREATED);
 		}
-		return new ResponseEntity<> ("not saved",HttpStatus.INTERNAL_SERVER_ERROR);
+//		return new ResponseEntity<> ("not saved",HttpStatus.INTERNAL_SERVER_ERROR);
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"category not saved");
 	}
 	
 	@GetMapping
@@ -44,7 +48,8 @@ public class CategoryController {
 		if(CollectionUtils.isEmpty(allCategory)) {
 			return ResponseEntity.noContent().build();
 		}
-		return new ResponseEntity<>(allCategory,HttpStatus.OK);
+//		return new ResponseEntity<>(allCategory,HttpStatus.OK);
+		return CommonUtil.createBuildResponse(allCategory, HttpStatus.OK);
 	}
 	
 	@GetMapping("/active-category")
@@ -54,7 +59,8 @@ public class CategoryController {
 		if(CollectionUtils.isEmpty(allActiveCategories)) {
 			return ResponseEntity.noContent().build();
 		}
-		return new ResponseEntity<>(allActiveCategories,HttpStatus.OK);
+//		return new ResponseEntity<>(allActiveCategories,HttpStatus.OK);
+		return CommonUtil.createBuildResponse(allActiveCategories, HttpStatus.OK);
 	}
 	
 	
@@ -63,9 +69,11 @@ public class CategoryController {
 		log.info("CategoryController :: gerCategoryByIdHandler");
 		CategoryDTO categoryDto= categoryService.getCategoryById(categoryId);
 		if(ObjectUtils.isEmpty(categoryDto)) {
-			return new ResponseEntity<>("Internal server error : ",HttpStatus.NOT_FOUND);
+//			return new ResponseEntity<>("Internal server error : ",HttpStatus.NOT_FOUND);
+			return CommonUtil.createErrorResponseMessage(HttpStatus.NOT_FOUND,"Internal server error");
 		}
-		return new ResponseEntity<>(categoryDto,HttpStatus.OK);
+//		return new ResponseEntity<>(categoryDto,HttpStatus.OK);
+		return CommonUtil.createBuildResponse(categoryDto, HttpStatus.OK);
 	}
 	
 	@DeleteMapping("/{categoryId}")
@@ -73,9 +81,11 @@ public class CategoryController {
 		log.info("CategoryController :: deleteCategoryByIdHandler");
 		Boolean deletedCategory = categoryService.deletecCategoryById(categoryId);
 		if(deletedCategory) {
-			return new ResponseEntity<>("category deleted success"+categoryId,HttpStatus.OK);
+//			return new ResponseEntity<>("category deleted success"+categoryId,HttpStatus.OK);
+			return CommonUtil.createBuildResponse("category deleted success"+categoryId, HttpStatus.OK);
 		}
-		return new ResponseEntity<>("category not deleted ",HttpStatus.INTERNAL_SERVER_ERROR);
+//		return new ResponseEntity<>("category not deleted ",HttpStatus.INTERNAL_SERVER_ERROR);
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"category not deleted" );
 	}
 	
 	
@@ -83,9 +93,11 @@ public class CategoryController {
 	public ResponseEntity<?> updateCategoryHandler(@RequestBody CategoryDTO categoryDto, @PathVariable Integer categoryId){
 		Boolean updatedCategory = categoryService.updateCategory(categoryId,categoryDto);
 		if(updatedCategory) {
-			return new ResponseEntity<>("update success",HttpStatus.OK);
+//			return new ResponseEntity<>("update success",HttpStatus.OK);
+			return CommonUtil.createBuildResponse("update success", HttpStatus.OK);
 		}
-		return new ResponseEntity<>("category not found with id : "+categoryId,HttpStatus.NOT_FOUND);
+//		return new ResponseEntity<>("category not found with id : "+categoryId,HttpStatus.NOT_FOUND);
+		return CommonUtil.createErrorResponse("category not found with id : "+ categoryId, HttpStatus.NOT_FOUND);
 	}
 }
 
