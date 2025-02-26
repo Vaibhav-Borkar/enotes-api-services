@@ -63,5 +63,10 @@ public class GlobalExceptionHandler {
 		return  CommonUtil.createErrorResponseMessage(HttpStatus.NOT_FOUND, e.getMessage());
 	}
 	
+	@ExceptionHandler(UnSupportedFileException.class)
+	public ResponseEntity<?> handleUnSupportedFileException(UnSupportedFileException e){
+		log.info("UnSupportedFileException :: UnSupportedFileException");
+		return  CommonUtil.createErrorResponseMessage(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
+	}
 	
 }

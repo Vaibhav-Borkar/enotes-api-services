@@ -4,6 +4,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.enotes.category.BaseModel;
 import com.enotes.category.Category;
+import com.enotes.file.FileDetails;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
@@ -35,5 +36,6 @@ public class Notes extends BaseModel{
 	@ManyToOne
 	private Category category;
 		
-	
+	@ManyToOne
+	private FileDetails fileDetails;
 }
