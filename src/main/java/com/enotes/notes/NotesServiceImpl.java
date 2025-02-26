@@ -1,50 +1,71 @@
 package com.enotes.notes;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.enotes.category.Category;
 import com.enotes.category.CategoryRepository;
 import com.enotes.exception.CategoryNotFoundException;
+import com.enotes.exception.UnSupportedFileException;
+import com.enotes.file.FileDetails;
+import com.enotes.file.FileDetailsRepository;
 import com.enotes.notes.NotesDTO.CategoryDTO;
+import com.enotes.utils.FileDetailsUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class NotesServiceImpl implements NotesService {
 
 	private final NotesRepository notesRepo;
-	private CategoryRepository categoryRepo;
+	private final CategoryRepository categoryRepo;
 	private final ModelMapper mapper;
-	
+	private final ObjectMapper objectMapper;
+	private final FileDetailsRepository fileDetailsRepo;
+	private final FileDetailsUtil fileDetailsUtil; 
 
+	@Value("${file.upload.path}")
+	private String uploadPath;
+	
 	@Override
-	public Boolean saveNotes(NotesDTO notesDTO) {
+	public Boolean saveNotes(String notes,MultipartFile file) throws Exception{
 		
+		NotesDTO notesDto = objectMapper.readValue(notes,NotesDTO.class);
 		// For checking the provided category is presented or not.
-		checkCategoryExists(notesDTO.getCategory());
+		fileDetailsUtil.checkCategoryExists(notesDto.getCategory());
+		Notes notesData = mapper.map(notesDto, Notes.class);
 		
-		Notes notes = mapper.map(notesDTO, Notes.class);
-		Notes savedNote = notesRepo.save(notes);
+		FileDetails fileDetails = fileDetailsUtil.saveFileDetails(file,uploadPath);
+		if (!ObjectUtils.isEmpty(fileDetails)) {
+			notesData.setFileDetails(fileDetails);
+		}
+		else {
+			notesData.setFileDetails(null);
+		}
+		
+		Notes savedNote = notesRepo.save(notesData);
 		if(ObjectUtils.isEmpty(savedNote)) {
 			return false;
 		}
 		return true;
-	}
+	} 
 
-	private void checkCategoryExists(CategoryDTO category) {
-		 Optional<Category> categoryId = categoryRepo.findById(category.getId());
-		 if(!categoryId.isPresent()) {
-			 throw new CategoryNotFoundException("category not found with id : "+category.getId());
-		 }
-		
-	}
 
 	@Override
 	public List<NotesDTO> getAllNotes() {
