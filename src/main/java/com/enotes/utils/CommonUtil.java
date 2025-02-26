@@ -1,6 +1,7 @@
 package com.enotes.utils;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import com.enotes.GenericResponse;
@@ -46,5 +47,7 @@ public class CommonUtil {
 				.build();
 		return response.create();
 	}
+
+	
 	
 }

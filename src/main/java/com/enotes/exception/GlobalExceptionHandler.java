@@ -1,5 +1,7 @@
 package com.enotes.exception;
 
+import java.io.FileNotFoundException;
+
 /*
  * IF WE NOT HANDLE THE EXCEPTION EXPLICITLY IN CONTROLLER OR OTHER CLASSES
  * THEN ONLY THE GLOBAL EXCEPTION WORKS OTHERWISE NOT.
@@ -67,6 +69,12 @@ public class GlobalExceptionHandler {
 	public ResponseEntity<?> handleUnSupportedFileException(UnSupportedFileException e){
 		log.info("UnSupportedFileException :: UnSupportedFileException");
 		return  CommonUtil.createErrorResponseMessage(HttpStatus.UNSUPPORTED_MEDIA_TYPE, e.getMessage());
+	}
+	
+	@ExceptionHandler(FileNotFoundException.class)
+	public ResponseEntity<?> handleFileNotFoundException(FileNotFoundException e){
+		log.info("FileNotFoundException :: FileNotFoundException");
+		return  CommonUtil.createErrorResponseMessage(HttpStatus.NOT_FOUND, e.getMessage());
 	}
 	
 }

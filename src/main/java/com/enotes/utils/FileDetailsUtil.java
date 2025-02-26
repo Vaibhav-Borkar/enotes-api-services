@@ -10,6 +10,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -89,6 +90,26 @@ public class FileDetailsUtil {
 			 throw new CategoryNotFoundException("category not found with id : "+category.getId());
 		 }
 		
+	}
+	
+	
+	public static String getContentType(String originalFileName) {
+		String extension = FilenameUtils.getExtension(originalFileName); // java_programing.pdf
+
+		switch (extension) {
+		case "pdf":
+			return "application/pdf";
+		case "xlsx":
+			return "application/vnd.openxmlformats-officedocument.spreadsheettml.sheet";
+		case "txt":
+			return "text/plan";
+		case "png":
+			return "image/png";
+		case "jpeg":
+			return "image/jpeg";
+		default:
+			return "application/octet-stream";
+		}
 	}
 
 }

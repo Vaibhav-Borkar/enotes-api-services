@@ -1,7 +1,10 @@
 package com.enotes.notes;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -15,11 +18,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.enotes.category.Category;
 import com.enotes.category.CategoryRepository;
 import com.enotes.exception.CategoryNotFoundException;
+import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.exception.UnSupportedFileException;
 import com.enotes.file.FileDetails;
 import com.enotes.file.FileDetailsRepository;
@@ -75,6 +80,20 @@ public class NotesServiceImpl implements NotesService {
 			return notesList;
 		}
 		return null;
+	}
+
+
+	@Override
+	public byte[] downloadFile(FileDetails fileDetails) throws Exception {
+		
+		InputStream inputStream = new FileInputStream(fileDetails.getPath());
+		return StreamUtils.copyToByteArray(inputStream);
+	}
+
+
+	@Override
+	public FileDetails getFileDetails(Integer id) {
+		return fileDetailsRepo.findById(id).orElseThrow(()->new ResourceNotFoundException("file is not avaible for id"+id));
 	}
 
 }
