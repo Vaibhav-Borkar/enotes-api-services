@@ -15,4 +15,6 @@ public interface NotesService {
 	public byte[] downloadFile(FileDetails fileDetails) throws Exception;
 
 	public FileDetails getFileDetails(Integer id);
+
+	public NotesResponse getAllNotesByUser(Integer userId,Integer pageNumber,Integer pageSize);
 }
