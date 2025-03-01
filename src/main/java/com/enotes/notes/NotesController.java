@@ -1,5 +1,6 @@
 package com.enotes.notes;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.http.HttpHeaders;
@@ -8,9 +9,12 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -72,4 +76,58 @@ public class NotesController {
 		return CommonUtil.createBuildResponse(allNotes, HttpStatus.OK);
 	}
 	
+	
+	@PutMapping("/{noteId}")
+	public ResponseEntity<?> updateNoteHandler(@PathVariable Integer noteId ,@RequestBody NotesDTO notesDto){
+	  Boolean result=notesService.updateNote(noteId,notesDto);
+	  if (result) {
+		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "update success");
+	}
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note id note found");
+	}
+	
+	
+	@DeleteMapping("/delete/{noteId}")
+	public ResponseEntity<?> softDeleteNotesHandler(@PathVariable Integer noteId){
+		Boolean result =notesService.softDeleteNotes(noteId);
+		 if (result) {
+			 return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success");
+		}
+		     return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
+				
+	}
+
+
+    @GetMapping ("/restore/{noteId}")
+    public ResponseEntity<?> restoreNotesHandler(@PathVariable Integer noteId){
+       	Boolean result =notesService.restoreNotes(noteId);
+	     if (result) {
+		      return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"restore success");
+		   }
+			  return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
+    }
+    
+    
+    @GetMapping("/recycle-bin/{userId}")
+    public ResponseEntity<?> getRecycleBinUserHandler(@PathVariable Integer userId){
+    	List<NotesDTO> recycledUser = notesService.getRecycleBinUser(userId);
+    	if(CollectionUtils.isEmpty(recycledUser)) {
+    		return CommonUtil.createErrorResponseMessage(HttpStatus.NO_CONTENT, "no user presentec in recycle bin");
+    	}
+    	return CommonUtil.createBuildResponse(recycledUser, HttpStatus.OK);
+    }
+    
+    
+    @PostMapping("/file-upload/{noteId}")
+    public ResponseEntity<?> uploadFileForNoteHandler(@PathVariable Integer noteId,@RequestParam MultipartFile file) throws IOException{
+    	
+    	Boolean isUploaded=notesService.uploadFileForNote(noteId,file);
+    	if (isUploaded) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "file uploaded successfully");
+		}
+    	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "file upload failed");
+    }
+    
 }
+
+

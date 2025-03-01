@@ -1,9 +1,13 @@
 package com.enotes.file;
 
+import com.enotes.notes.Notes;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -29,4 +33,9 @@ public class FileDetails {
 	private String path;
 	
 	private Long fileSize;
+	
+//	New which i added
+	@ManyToOne
+	@JoinColumn(name = "notes_id") 
+	private Notes notes;
 }

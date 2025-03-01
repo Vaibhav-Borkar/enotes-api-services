@@ -1,8 +1,7 @@
 package com.enotes.notes;
 
 import java.util.Date;
-
-import com.enotes.category.CategoryDTO;
+import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -31,7 +30,7 @@ public class NotesDTO {
 
 	private Date updatedOn;
 	
-	private FileDTO fileDetails;
+	private List<FileDTO> fileDetails;
 	
 	
 	@Getter
