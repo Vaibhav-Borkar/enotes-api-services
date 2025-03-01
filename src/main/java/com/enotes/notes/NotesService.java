@@ -28,4 +28,8 @@ public interface NotesService {
 	public List<NotesDTO> getRecycleBinUser(Integer userId);
 
 	public Boolean uploadFileForNote(Integer noteId, MultipartFile file) throws IOException;
+
+	public void hardDeleteNotes(Integer noteId);
+
+	public void emptyRecycleBin(Integer userId);
 }
