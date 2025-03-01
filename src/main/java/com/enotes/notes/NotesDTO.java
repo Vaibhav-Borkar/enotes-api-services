@@ -1,5 +1,6 @@
 package com.enotes.notes;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +30,8 @@ public class NotesDTO {
 	private Integer updatedBy;
 
 	private Date updatedOn;
+	
+	private LocalDateTime deletedOn;
 	
 	private List<FileDTO> fileDetails;
 	

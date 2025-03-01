@@ -3,6 +3,7 @@ package com.enotes.notes;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -134,7 +135,7 @@ public class NotesServiceImpl implements NotesService {
 		Notes notes = notesRepo.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("note not found for this id "));
 		if(!ObjectUtils.isEmpty(notes)) {
 		notes.setIsDeleted(true);
-		notes.setDeletedOn(new Date());
+		notes.setDeletedOn(LocalDateTime.now());
 		notesRepo.save(notes);
 		return true;
 		}
@@ -181,6 +182,26 @@ public class NotesServiceImpl implements NotesService {
 	    fileDetailsRepo.save(savedFile);
 	    notesRepo.save(note);
 		return true;
+	}
+
+
+	@Override
+	public void hardDeleteNotes(Integer noteId) {
+		Notes note = notesRepo.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("Not not not found for this id "));
+		if (note.getIsDeleted()) {
+			notesRepo.delete(note);
+		}
+		throw new IllegalArgumentException("soory you can`t delete directly.");
+	}
+
+
+	@Override
+	public void emptyRecycleBin(Integer userId) {
+		List<Notes> notes =notesRepo.findByCreatedByAndIsDeletedTrue(userId);
+		if(!CollectionUtils.isEmpty(notes)) {
+			notesRepo.deleteAll();
+		}
+		
 	}
 
 }

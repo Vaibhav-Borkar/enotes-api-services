@@ -128,6 +128,19 @@ public class NotesController {
     	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "file upload failed");
     }
     
+    @DeleteMapping("/delete/hard/{noteId}")
+    public ResponseEntity<?> hardDeleteNotesHandler(@PathVariable Integer noteId){
+        notesService.hardDeleteNotes(noteId);
+        return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success.");
+    }
+    
+    @DeleteMapping("/delete")
+    public ResponseEntity<?> emptyRecycleBinHandler(@PathVariable Integer noteId){
+    	Integer userId=1;
+        notesService.emptyRecycleBin(userId);
+        return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success.");
+    }
+    
 }
 
 
