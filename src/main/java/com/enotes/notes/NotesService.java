@@ -32,4 +32,6 @@ public interface NotesService {
 	public void hardDeleteNotes(Integer noteId);
 
 	public void emptyRecycleBin(Integer userId);
+
+	public Boolean copyNote(Integer noteId);
 }

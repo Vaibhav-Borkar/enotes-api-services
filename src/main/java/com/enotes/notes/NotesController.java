@@ -141,6 +141,15 @@ public class NotesController {
         return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success.");
     }
     
+    @GetMapping("/copy/{noteId}")
+    public ResponseEntity<?> copyNoteHandler(@PathVariable Integer noteId){
+    	Boolean copyNote = notesService.copyNote(noteId);
+    	if(copyNote) {
+    		return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"copied success");   		
+    	}
+    	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "copy failed . Try again !");
+    }
+    
 }
 
 
