@@ -17,10 +17,6 @@ import lombok.Setter;
 @MappedSuperclass
 public abstract class BaseModel {
 
-	private Boolean isActive;
-
-	private Boolean isDeleted;
-
 	@CreatedBy
 	private Integer createdBy;
 

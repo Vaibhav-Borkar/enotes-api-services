@@ -18,10 +18,12 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@Builder
 @Getter
 @Setter
 @AllArgsConstructor
@@ -46,4 +48,8 @@ public class Notes extends BaseModel{
 	private List<FileDetails> fileDetails;
 	
 	private LocalDateTime deletedOn;
+	
+	private Boolean isActive;
+
+	private Boolean isDeleted;
 }
