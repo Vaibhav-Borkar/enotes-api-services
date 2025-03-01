@@ -1,5 +1,6 @@
 package com.enotes.notes;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -17,4 +18,14 @@ public interface NotesService {
 	public FileDetails getFileDetails(Integer id);
 
 	public NotesResponse getAllNotesByUser(Integer userId,Integer pageNumber,Integer pageSize);
+
+	public Boolean updateNote(Integer noteId, NotesDTO notesDto);
+
+	public Boolean softDeleteNotes(Integer noteId);
+
+	public Boolean restoreNotes(Integer noteId);
+
+	public List<NotesDTO> getRecycleBinUser(Integer userId);
+
+	public Boolean uploadFileForNote(Integer noteId, MultipartFile file) throws IOException;
 }

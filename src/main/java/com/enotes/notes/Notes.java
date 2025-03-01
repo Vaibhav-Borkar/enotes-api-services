@@ -1,17 +1,22 @@
 package com.enotes.notes;
 
+import java.util.Date;
+import java.util.List;
+
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import com.enotes.category.BaseModel;
 import com.enotes.category.Category;
 import com.enotes.file.FileDetails;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -36,6 +41,9 @@ public class Notes extends BaseModel{
 	@ManyToOne
 	private Category category;
 		
-	@ManyToOne
-	private FileDetails fileDetails;
+//	@ManyToOne
+	@OneToMany(mappedBy = "notes", cascade = CascadeType.ALL, orphanRemoval = true)
+	private List<FileDetails> fileDetails;
+	
+	private Date deletedOn;
 }
