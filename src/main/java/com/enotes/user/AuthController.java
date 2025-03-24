@@ -1,6 +1,5 @@
 package com.enotes.user;
 
-import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,13 +12,13 @@ import com.enotes.utils.CommonUtil;
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/user")
+@RequestMapping("/api/v1/auth")
 @AllArgsConstructor
 public class AuthController {
 
 	private final UserService userService;
 	@PostMapping
-	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto) throws BadRequestException{
+	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto) throws Exception{
 		Boolean register = userService.register(userDto);
 		if(register) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
