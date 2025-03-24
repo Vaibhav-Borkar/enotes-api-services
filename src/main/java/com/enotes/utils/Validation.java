@@ -1,17 +1,29 @@
 package com.enotes.utils;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
-import org.springframework.stereotype.Component;
-import org.springframework.util.ObjectUtils;
-import com.enotes.category.CategoryDTO;
 
+import org.apache.coyote.BadRequestException;
+import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.ObjectUtils;
+import org.springframework.util.StringUtils;
+
+import com.enotes.category.CategoryDTO;
+import com.enotes.user.RoleRepository;
+import com.enotes.user.UserDTO;
+
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Component
 @Slf4j
-public class Validation {
+@AllArgsConstructor
+public class Validation extends TodoValidation{
 
+	private final RoleRepository roleRepo;
+	
 	public void categoryValidation(CategoryDTO categoryDto) {
 
 		Map<String, Object> error = new LinkedHashMap<>();
@@ -53,5 +65,41 @@ public class Validation {
 		if (!error.isEmpty()) {
 			throw new com.enotes.exception.ValidationException(error);
 		}
+	}
+	
+	// Validation for user request
+	
+	public void userValidation(UserDTO user) throws BadRequestException {
+		if(!StringUtils.hasText(user.getFirstName())) {
+			throw new BadRequestException("first name is invalid ");
+		}
+		
+		if(!StringUtils.hasText(user.getLastName())) {
+			throw new BadRequestException("last name is invalid ");
+		}
+		
+		if(!StringUtils.hasText(user.getEmail()) ||  !user.getEmail().matches(Constants.EMAIL_REGEX)) {
+			throw new BadRequestException("email is invalid ");
+		}
+		
+		if(!StringUtils.hasText(user.getMobileNo().trim()) ||  !user.getMobileNo().trim().matches(Constants.MOBNO_REGEX)) {
+			throw new BadRequestException("mobile number is invalid ");
+		}
+		
+		if (CollectionUtils.isEmpty(user.getRoles())) {
+			throw new IllegalArgumentException("role is invalid");
+		} else {
+
+			List<Integer> roleIds = roleRepo.findAll().stream().map(r -> r.getId()).toList();
+
+			List<Integer> invalidReqRoleids = user.getRoles().stream().map(r -> r.getId())
+					.filter(roleId -> !roleIds.contains(roleId)).toList();
+
+			if (!CollectionUtils.isEmpty(invalidReqRoleids)) {
+				throw new IllegalArgumentException("role is invalid" + invalidReqRoleids);
+			}
+
+		}
+
 	}
 }
