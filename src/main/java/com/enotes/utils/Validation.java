@@ -11,8 +11,10 @@ import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
 import com.enotes.category.CategoryDTO;
+import com.enotes.exception.DataExistsException;
 import com.enotes.user.RoleRepository;
 import com.enotes.user.UserDTO;
+import com.enotes.user.UserRepository;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +25,8 @@ import lombok.extern.slf4j.Slf4j;
 public class Validation extends TodoValidation{
 
 	private final RoleRepository roleRepo;
+	
+	private final UserRepository userRepo;
 	
 	public void categoryValidation(CategoryDTO categoryDto) {
 
@@ -81,7 +85,12 @@ public class Validation extends TodoValidation{
 		if(!StringUtils.hasText(user.getEmail()) ||  !user.getEmail().matches(Constants.EMAIL_REGEX)) {
 			throw new BadRequestException("email is invalid ");
 		}
-		
+		else {
+			Boolean isExists=userRepo.existsByEmail(user.getEmail());
+			if(isExists) {
+				throw new DataExistsException("email allready exists");
+			}
+		}
 		if(!StringUtils.hasText(user.getMobileNo().trim()) ||  !user.getMobileNo().trim().matches(Constants.MOBNO_REGEX)) {
 			throw new BadRequestException("mobile number is invalid ");
 		}
