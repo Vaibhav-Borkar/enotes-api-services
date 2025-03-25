@@ -24,6 +24,8 @@ public class UserDTO {
 
 	private String mobileNo;
 	
+	private String password;
+	
 	private List<RoleDTO> roles;
 	
 	@Builder

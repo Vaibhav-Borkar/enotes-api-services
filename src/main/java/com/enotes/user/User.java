@@ -3,6 +3,9 @@ package com.enotes.user;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.enotes.auth.AccountStatus;
+import com.enotes.auth.Role;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -39,8 +42,11 @@ public class User {
 	
 	private String mobileNo;
 	
+	private String password;
+
+	
 //	@OneToMany(cascade = CascadeType.ALL) 
-	@ManyToMany
+	@ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),

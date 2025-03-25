@@ -10,9 +10,9 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 
+import com.enotes.auth.RoleRepository;
 import com.enotes.category.CategoryDTO;
 import com.enotes.exception.DataExistsException;
-import com.enotes.user.RoleRepository;
 import com.enotes.user.UserDTO;
 import com.enotes.user.UserRepository;
 

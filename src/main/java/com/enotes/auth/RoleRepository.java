@@ -1,4 +1,4 @@
-package com.enotes.user;
+package com.enotes.auth;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
