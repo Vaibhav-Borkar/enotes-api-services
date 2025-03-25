@@ -5,6 +5,7 @@ import java.util.List;
 
 import com.enotes.auth.AccountStatus;
 import com.enotes.auth.Role;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
@@ -47,6 +48,7 @@ public class User {
 	
 //	@OneToMany(cascade = CascadeType.ALL) 
 	@ManyToMany(fetch = FetchType.EAGER)
+	@JsonManagedReference
     @JoinTable(
         name = "user_roles",
         joinColumns = @JoinColumn(name = "user_id"),

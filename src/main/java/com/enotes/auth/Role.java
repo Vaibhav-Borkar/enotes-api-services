@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.enotes.user.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,5 +32,6 @@ public class Role {
 	private String name;
 
 	@ManyToMany(mappedBy = "roles")
+	@JsonBackReference
 	private List<User> users = new ArrayList<>();
 }
