@@ -1,12 +1,11 @@
 package com.enotes.user;
 
-import java.io.UnsupportedEncodingException;
 import java.util.List;
+import java.util.UUID;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
-
 import com.enotes.config.EmailRequest;
 import com.enotes.config.EmailService;
 import com.enotes.utils.Validation;
@@ -23,24 +22,32 @@ public class UserServiceImpl implements UserService {
 	private final EmailService emailService;
 
 	@Override
-	public Boolean register(UserDTO userDto) throws Exception {
+	public Boolean register(UserDTO userDto,String url) throws Exception {
 		validation.userValidation(userDto);
 		User user = mapper.map(userDto, User.class);
 		setRole(userDto, user);
+		AccountStatus accountStatus = AccountStatus.builder()
+		.isActive(false)
+		.verificationCode(UUID.randomUUID().toString())
+		.build();
+		user.setStatus(accountStatus);
 		User save = userRepo.save(user);
 		if (!ObjectUtils.isEmpty(save)) {
-			emailSend(save);
+			emailSend(save,url);
 			return true;
 		}
 		return false;
 	}
 
-	private void emailSend(User user) throws Exception {
-		String message="Hii, <br>"+user.getFirstName()+"<br>"
+	private void emailSend(User user,String url) throws Exception {
+		String message="Hii, <br>[[username]]<br>"
 				+ "<br> Your account register successfully .<br>"
 				+ "<br> Click the bellow link for verify & active you account <br>"
-				+ "<a href='#'> Click Here <a> <br> <br>"
+				+ "<a href='[[url]]'> Click Here <a> <br> <br>"
 				+ "Thanks ! <br> Enotes.com";
+		message = message.replace("[[username]]", user.getFirstName());
+		message=message.replace("[[url]]", url+"/api/v1/home/verify?uid="+user.getId()+"&&code="+user.getStatus().getVerificationCode());
+		
 		EmailRequest request = EmailRequest.builder()
 				.to(user.getEmail())
 				.title("Account Creation Confirmation")
