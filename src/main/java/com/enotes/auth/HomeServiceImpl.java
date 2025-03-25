@@ -1,9 +1,11 @@
-package com.enotes.user;
+package com.enotes.auth;
 
 import org.springframework.stereotype.Service;
 
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.exception.SuccessException;
+import com.enotes.user.User;
+import com.enotes.user.UserRepository;
 
 import lombok.AllArgsConstructor;
 

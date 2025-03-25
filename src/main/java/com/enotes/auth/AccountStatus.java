@@ -1,13 +1,9 @@
-package com.enotes.user;
-
-import java.util.ArrayList;
-import java.util.List;
+package com.enotes.auth;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,14 +16,13 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Role {
+public class AccountStatus {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-
-	private String name;
-
-	@ManyToMany(mappedBy = "roles")
-	private List<User> users = new ArrayList<>();
+	
+	private Boolean isActive;
+	
+	private String verificationCode;
 }

@@ -1,12 +1,16 @@
-package com.enotes.user;
+package com.enotes.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.enotes.user.UserDTO;
+import com.enotes.user.UserService;
 import com.enotes.utils.CommonUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,7 +22,8 @@ import lombok.AllArgsConstructor;
 public class AuthController {
 
 	private final UserService userService;
-	@PostMapping
+		
+	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto,HttpServletRequest req) throws Exception{
 		String url = CommonUtil.getUrl(req);
 		Boolean register = userService.register(userDto,url);
@@ -27,4 +32,21 @@ public class AuthController {
 		}
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "registeration failed");
 	}
+	
+	@PostMapping("/login")
+	public ResponseEntity<?> loginUserHandler(@RequestBody LoginRequest req){
+		LoginResponse loginUser = userService.loginUser(req);
+		if(ObjectUtils.isEmpty(loginUser)) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.BAD_REQUEST, "invalid credentials");
+		}
+		return CommonUtil.createBuildResponse(loginUser, HttpStatus.OK);
+	}
 }
+
+
+
+
+
+
+
+
