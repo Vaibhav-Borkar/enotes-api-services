@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.utils.CommonUtil;
 
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -18,8 +19,9 @@ public class AuthController {
 
 	private final UserService userService;
 	@PostMapping
-	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto) throws Exception{
-		Boolean register = userService.register(userDto);
+	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto,HttpServletRequest req) throws Exception{
+		String url = CommonUtil.getUrl(req);
+		Boolean register = userService.register(userDto,url);
 		if(register) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
 		}
