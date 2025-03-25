@@ -18,6 +18,7 @@ import com.enotes.auth.RoleRepository;
 import com.enotes.config.EmailRequest;
 import com.enotes.config.EmailService;
 import com.enotes.security.CustomUserDetails;
+import com.enotes.security.JwtService;
 import com.enotes.utils.Validation;
 import lombok.AllArgsConstructor;
 
@@ -32,6 +33,7 @@ public class UserServiceImpl implements UserService {
 	private final EmailService emailService;
 	private final AuthenticationManager authenticationManager;
 	private final PasswordEncoder passwordEncoder;
+	private final JwtService jwtService;
 
 	@Override
 	public Boolean register(UserDTO userDto, String url) throws Exception {
@@ -89,7 +91,7 @@ public class UserServiceImpl implements UserService {
 				.authenticate(new UsernamePasswordAuthenticationToken(req.getEmail(), req.getPassword()));
 		if (authenticate.isAuthenticated()) {
 			CustomUserDetails details = (CustomUserDetails) authenticate.getPrincipal();
-			String token = "8rwr98wyr9rwhruwrwrewror98hewrysfsfshfsuf9898r98wrhfhwrhw";
+			String token = jwtService.generateToken(details.getUser());
 
 			LoginResponse loginResponse = LoginResponse.builder().token(token)
 					.user(mapper.map(details.getUser(), UserDTO.class)).build();
