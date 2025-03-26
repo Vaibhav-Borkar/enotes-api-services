@@ -1,21 +1,22 @@
 package com.enotes.exception;
 
-import java.io.FileNotFoundException;
-
-import org.apache.coyote.BadRequestException;
-/*
- * IF WE NOT HANDLE THE EXCEPTION EXPLICITLY IN CONTROLLER OR OTHER CLASSES
+/**
+ * @CONCLUSION IF WE NOT HANDLE THE EXCEPTION EXPLICITLY IN CONTROLLER OR OTHER CLASSES
  * THEN ONLY THE GLOBAL EXCEPTION WORKS OTHERWISE NOT.
  * IF YOU HANDLE THE EXCEPTION USING TRY CATCH THEN IN THIS CASE IT WONT WORKS.
+ * 
+ * @IMPORTANT IT CANT HANDLE THE FILTER EXCEPTION LIKE IF THE JWT SIGNATURE VERIFICATION FAILED THEN IN THIS CASE THIS EXCEPTION CANT REACH THE GLOBAL EXCEPTION HANDLER.
  */
+import java.io.FileNotFoundException;
+import org.apache.coyote.BadRequestException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authorization.AuthorizationDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
-import org.springframework.web.bind.annotation.ExceptionHandler;
-
+import org.springframework.web.bind.annotation.ExceptionHandler;	
 import com.enotes.utils.CommonUtil;
-
 import lombok.extern.slf4j.Slf4j;
 
 @ControllerAdvice 
@@ -91,5 +92,18 @@ public class GlobalExceptionHandler {
 		log.info("BadCredentialsException :: BadCredentialsException");
 		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.BAD_REQUEST);
 	}
+	
+	@ExceptionHandler(AuthorizationDeniedException.class)
+	public ResponseEntity<?> handleAuthorizationDeniedException(AuthorizationDeniedException e){
+		log.info("AuthorizationDeniedException :: AuthorizationDeniedException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.FORBIDDEN);
+	}
+	
+	@ExceptionHandler(AccessDeniedException.class)
+	public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e){
+		log.info("AccessDeniedException :: AccessDeniedException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.FORBIDDEN);
+	}
+	
 	
 }
