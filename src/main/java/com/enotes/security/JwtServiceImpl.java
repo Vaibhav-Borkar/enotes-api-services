@@ -1,21 +1,16 @@
 package com.enotes.security;
 
-
-
 import java.security.Key;
 import java.util.Base64;
-import java.util.Base64.Decoder;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-
 import javax.crypto.KeyGenerator;
 import javax.crypto.SecretKey;
-
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import com.enotes.user.User;
-
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -46,12 +41,12 @@ public class JwtServiceImpl implements JwtService {
 		claims.put("status", user.getStatus().getIsActive());
 		
 		String token = Jwts.builder()
-		.claims(claims)
-		.subject(user.getEmail())
-		.issuedAt(new Date(System.currentTimeMillis()))
-		.expiration(new Date(System.currentTimeMillis()+60*60*10))
-		.signWith(getKey())
-		.compact();
+		       .claims(claims)
+		       .subject(user.getEmail())
+		       .issuedAt(new Date(System.currentTimeMillis()))
+		       .expiration(new Date(System.currentTimeMillis() + 1 * 60 * 60 * 1000)) // 1 Hour
+		       .signWith(getKey())
+		       .compact();
 		
 		return token;
 	}
@@ -59,6 +54,42 @@ public class JwtServiceImpl implements JwtService {
 	private Key getKey() {
 		byte[] decode = Decoders.BASE64.decode(secretKey);
 		return Keys.hmacShaKeyFor(decode);
+	}
+
+	@Override
+	public String extractUsername(String jwtToken) {
+		Claims claims= extractAllClaims(jwtToken);
+		return claims.getSubject();
+	}
+
+	private Claims extractAllClaims(String jwtToken) {
+		Claims claims = Jwts.parser().verifyWith(decryptKey(secretKey))
+		    .build()
+		    .parseSignedClaims(jwtToken)
+		    .getPayload();	
+		return claims;
+	}
+
+	private SecretKey decryptKey(String secretKey) {
+		byte[] decode = Decoders.BASE64.decode(secretKey);
+		return Keys.hmacShaKeyFor(decode);
+	}
+
+	@Override
+	public Boolean validateToken(String jwtToken, UserDetails details) {
+		String username = extractUsername(jwtToken);
+		Boolean isExpired =isTokenExpired(jwtToken);
+		if(username.equalsIgnoreCase(details.getUsername()) && !isExpired) {
+			return true;
+		}
+		return false;
+	}
+
+	private Boolean isTokenExpired(String jwtToken) {
+		Claims claims = extractAllClaims(jwtToken);
+		Date expiredDate = claims.getExpiration();
+		// 10th today - expired 11th before.	
+		return expiredDate.before(new Date());
 	}
 
 }
