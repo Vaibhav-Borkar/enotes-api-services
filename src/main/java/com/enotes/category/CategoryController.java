@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -28,75 +29,68 @@ public class CategoryController {
 
 	private final CategoryService categoryService;
 	
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping
 	public ResponseEntity<?> saveCategoryHandler(@RequestBody CategoryDTO category) {
 		log.info("CategoryController :: saveCategoryHandler");
 		Boolean saveCategory = categoryService.saveCategory(category);
 		if(saveCategory) {
-//			return new ResponseEntity<>("saved success",HttpStatus.CREATED);
 			return CommonUtil.createBuildResponse("saved success", HttpStatus.CREATED);
 		}
-//		return new ResponseEntity<> ("not saved",HttpStatus.INTERNAL_SERVER_ERROR);
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"category not saved");
 	}
 	
 	@GetMapping
+	@PreAuthorize("hasAnyRole('ADMIN','USER')")
 	public ResponseEntity<?> getAllCategoryHandler(){
 		log.info("CategoryController :: getAllCategoryHandler");
 		List<CategoryDTO> allCategory = categoryService.getAllCategory();
 		if(CollectionUtils.isEmpty(allCategory)) {
 			return ResponseEntity.noContent().build();
 		}
-//		return new ResponseEntity<>(allCategory,HttpStatus.OK);
 		return CommonUtil.createBuildResponse(allCategory, HttpStatus.OK);
 	}
 	
 	@GetMapping("/active-category")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getActiveCategoryHandler(){
 		log.info("CategoryController :: getActiveCategoryHandler");
 		List<CategoryResponse> allActiveCategories=categoryService.getAllActiveCategory();
 		if(CollectionUtils.isEmpty(allActiveCategories)) {
 			return ResponseEntity.noContent().build();
 		}
-//		return new ResponseEntity<>(allActiveCategories,HttpStatus.OK);
 		return CommonUtil.createBuildResponse(allActiveCategories, HttpStatus.OK);
 	}
 	
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@GetMapping("/{categoryId}")
 	public ResponseEntity<?> getCategoryByIdHandler(@PathVariable Integer categoryId){
 		log.info("CategoryController :: gerCategoryByIdHandler");
 		CategoryDTO categoryDto= categoryService.getCategoryById(categoryId);
 		if(ObjectUtils.isEmpty(categoryDto)) {
-//			return new ResponseEntity<>("Internal server error : ",HttpStatus.NOT_FOUND);
 			return CommonUtil.createErrorResponseMessage(HttpStatus.NOT_FOUND,"Internal server error");
 		}
-//		return new ResponseEntity<>(categoryDto,HttpStatus.OK);
 		return CommonUtil.createBuildResponse(categoryDto, HttpStatus.OK);
 	}
 	
+	@PreAuthorize("hasRole('ADMIN')")
 	@DeleteMapping("/{categoryId}")
 	public ResponseEntity<?> deleteCategoryByIdHandler(@PathVariable Integer categoryId){
 		log.info("CategoryController :: deleteCategoryByIdHandler");
 		Boolean deletedCategory = categoryService.deletecCategoryById(categoryId);
 		if(deletedCategory) {
-//			return new ResponseEntity<>("category deleted success"+categoryId,HttpStatus.OK);
 			return CommonUtil.createBuildResponse("category deleted success"+categoryId, HttpStatus.OK);
 		}
-//		return new ResponseEntity<>("category not deleted ",HttpStatus.INTERNAL_SERVER_ERROR);
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"category not deleted" );
 	}
 	
-	
+	@PreAuthorize("hasRole('ADMIN')")
 	@PutMapping("/{categoryId}")
 	public ResponseEntity<?> updateCategoryHandler(@RequestBody CategoryDTO categoryDto, @PathVariable Integer categoryId){
 		Boolean updatedCategory = categoryService.updateCategory(categoryId,categoryDto);
 		if(updatedCategory) {
-//			return new ResponseEntity<>("update success",HttpStatus.OK);
 			return CommonUtil.createBuildResponse("update success", HttpStatus.OK);
 		}
-//		return new ResponseEntity<>("category not found with id : "+categoryId,HttpStatus.NOT_FOUND);
 		return CommonUtil.createErrorResponse("category not found with id : "+ categoryId, HttpStatus.NOT_FOUND);
 	}
 }

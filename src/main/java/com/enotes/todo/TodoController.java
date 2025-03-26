@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,6 +24,7 @@ public class TodoController {
 	private TodoService todoService;
 
 	@PostMapping
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> saveTodoHandler(@RequestBody TodoDTO todo) {
 		Boolean saveTodo = todoService.saveTodo(todo);
 		if (saveTodo) {
@@ -32,6 +34,7 @@ public class TodoController {
 	}
 
 	@GetMapping("/{todoId}")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getTodoByIdHandler(@PathVariable Integer todoId) {
 		TodoDTO todo = todoService.getTodoById(todoId);
 		if (todo != null) {
@@ -42,6 +45,7 @@ public class TodoController {
 	
 	
 	@GetMapping
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> getTodoByUser(){
 		List<TodoDTO> todoList = todoService.getTodoByUser();
 		if (todoList != null) {
@@ -51,6 +55,7 @@ public class TodoController {
 	}
 	
 	@PostMapping("/{todoId}")
+	@PreAuthorize("hasRole('USER')")
 	public ResponseEntity<?> updateTodoHandler(@PathVariable Integer todoId,@RequestBody TodoDTO todo){
 		Boolean result = todoService.updateTodo(todoId,todo);
 		if(result) {
