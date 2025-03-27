@@ -17,7 +17,7 @@ public interface NotesService {
 
 	public FileDetails getFileDetails(Integer id);
 
-	public NotesResponse getAllNotesByUser(Integer userId,Integer pageNumber,Integer pageSize);
+	public NotesResponse getAllNotesByUser(Integer pageNumber,Integer pageSize);
 
 	public Boolean updateNote(Integer noteId, NotesDTO notesDto);
 
@@ -25,13 +25,13 @@ public interface NotesService {
 
 	public Boolean restoreNotes(Integer noteId);
 
-	public List<NotesDTO> getRecycleBinUser(Integer userId);
+	public List<NotesDTO> getRecycleBinUser();
 
 	public Boolean uploadFileForNote(Integer noteId, MultipartFile file) throws IOException;
 
 	public void hardDeleteNotes(Integer noteId);
 
-	public void emptyRecycleBin(Integer userId);
+	public void emptyRecycleBin();
 
 	public Boolean copyNote(Integer noteId);
 }

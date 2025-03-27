@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.enotes.user.UserDTO;
+import com.enotes.user.UserRequest;
 import com.enotes.user.UserService;
 import com.enotes.utils.CommonUtil;
 
@@ -24,7 +24,7 @@ public class AuthController {
 	private final UserService userService;
 		
 	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestBody UserDTO userDto,HttpServletRequest req) throws Exception{
+	public ResponseEntity<?> registerUser(@RequestBody UserRequest userDto,HttpServletRequest req) throws Exception{
 		String url = CommonUtil.getUrl(req);
 		Boolean register = userService.register(userDto,url);
 		if(register) {

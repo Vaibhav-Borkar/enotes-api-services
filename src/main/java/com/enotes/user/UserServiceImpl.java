@@ -36,7 +36,7 @@ public class UserServiceImpl implements UserService {
 	private final JwtService jwtService;
 
 	@Override
-	public Boolean register(UserDTO userDto, String url) throws Exception {
+	public Boolean register(UserRequest userDto, String url) throws Exception {
 		validation.userValidation(userDto);
 		User user = mapper.map(userDto, User.class);
 		setRole(userDto, user);
@@ -78,8 +78,8 @@ public class UserServiceImpl implements UserService {
 		emailService.sendEmail(request);
 	}
 
-	private void setRole(UserDTO userDto, User user) {
-		List<Integer> reqRoleIds = userDto.getRoles().stream().map(UserDTO.RoleDTO::getId).toList();
+	private void setRole(UserRequest userDto, User user) {
+		List<Integer> reqRoleIds = userDto.getRoles().stream().map(UserRequest.RoleDTO::getId).toList();
 		List<Role> roles = roleRepo.findAllById(reqRoleIds);
 		user.getRoles().clear(); // Ensure roles are updated properly
 		user.getRoles().addAll(roles);
@@ -94,7 +94,7 @@ public class UserServiceImpl implements UserService {
 			String token = jwtService.generateToken(details.getUser());
 
 			LoginResponse loginResponse = LoginResponse.builder().token(token)
-					.user(mapper.map(details.getUser(), UserDTO.class)).build();
+					.user(mapper.map(details.getUser(), UserRequest.class)).build();
 			return loginResponse;
 		}
 		return null;
