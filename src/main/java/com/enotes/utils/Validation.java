@@ -13,7 +13,7 @@ import org.springframework.util.StringUtils;
 import com.enotes.auth.RoleRepository;
 import com.enotes.category.CategoryDTO;
 import com.enotes.exception.DataExistsException;
-import com.enotes.user.UserDTO;
+import com.enotes.user.UserRequest;
 import com.enotes.user.UserRepository;
 
 import lombok.AllArgsConstructor;
@@ -73,7 +73,7 @@ public class Validation extends TodoValidation{
 	
 	// Validation for user request
 	
-	public void userValidation(UserDTO user) throws BadRequestException {
+	public void userValidation(UserRequest user) throws BadRequestException {
 		if(!StringUtils.hasText(user.getFirstName())) {
 			throw new BadRequestException("first name is invalid ");
 		}

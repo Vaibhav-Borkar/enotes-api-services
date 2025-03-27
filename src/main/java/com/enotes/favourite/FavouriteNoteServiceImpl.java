@@ -9,6 +9,8 @@ import org.springframework.util.CollectionUtils;
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.notes.Notes;
 import com.enotes.notes.NotesRepository;
+import com.enotes.utils.CommonUtil;
+
 import lombok.AllArgsConstructor;
 
 @Service
@@ -21,7 +23,7 @@ public class FavouriteNoteServiceImpl implements FavouriteNoteService {
 	
 	@Override
 	public void favouriteNote(Integer noteId) {
-		Integer userId=1;
+		Integer userId=CommonUtil.getLoggedInUser().getId();
 		Notes note = notesRepo.findById(noteId).orElseThrow(()-> new ResourceNotFoundException("note not found for this id"));
 		
 		 // Check if the note is already marked as favorite by the user
@@ -49,7 +51,7 @@ public class FavouriteNoteServiceImpl implements FavouriteNoteService {
 
 	@Override
 	public List<FavouriteNoteDTO> getUserFavouriteNotes() {
-		Integer userId=1;
+		Integer userId=CommonUtil.getLoggedInUser().getId();
 		List<FavouriteNote> notes = favouriteNoteRepo.findByUserId(userId); 
 		
 		if(CollectionUtils.isEmpty(notes)) {

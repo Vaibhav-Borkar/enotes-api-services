@@ -5,7 +5,7 @@ import com.enotes.auth.LoginResponse;
 
 public interface UserService {
 
-	public Boolean register(UserDTO user, String url) throws Exception;
+	public Boolean register(UserRequest user, String url) throws Exception;
 
 	public LoginResponse loginUser(LoginRequest req);
 }

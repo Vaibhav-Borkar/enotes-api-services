@@ -6,10 +6,7 @@ import java.io.InputStream;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import java.util.Optional;
-
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -25,6 +22,7 @@ import com.enotes.category.CategoryRepository;
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.file.FileDetails;
 import com.enotes.file.FileDetailsRepository;
+import com.enotes.utils.CommonUtil;
 import com.enotes.utils.FileDetailsUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -97,7 +95,8 @@ public class NotesServiceImpl implements NotesService {
 
 
 	@Override
-	public NotesResponse getAllNotesByUser(Integer userId,Integer pageNumber,Integer pageSize) {
+	public NotesResponse getAllNotesByUser(Integer pageNumber,Integer pageSize) {
+		Integer userId=CommonUtil.getLoggedInUser().getId();
 		Pageable pageable = PageRequest.of(pageNumber,pageSize);
 //	    Page<Notes> pageNotes = notesRepo.findByCreatedBy(userId,pageable);
 		Page<Notes> pageNotes = notesRepo.findByCreatedByAndIsDeletedFalse(userId,pageable);
@@ -157,7 +156,8 @@ public class NotesServiceImpl implements NotesService {
 
 
 	@Override
-	public List<NotesDTO> getRecycleBinUser(Integer userId) {
+	public List<NotesDTO> getRecycleBinUser() {
+		Integer userId=CommonUtil.getLoggedInUser().getId();
 		List<Notes> notes =notesRepo.findByCreatedByAndIsDeletedTrue(userId);
 		System.out.print(notes);
 		return notes.stream().map(note-> mapper.map(note, NotesDTO.class)).toList();
@@ -196,7 +196,8 @@ public class NotesServiceImpl implements NotesService {
 
 
 	@Override
-	public void emptyRecycleBin(Integer userId) {
+	public void emptyRecycleBin() {
+		Integer userId=CommonUtil.getLoggedInUser().getId();
 		List<Notes> notes =notesRepo.findByCreatedByAndIsDeletedTrue(userId);
 		if(!CollectionUtils.isEmpty(notes)) {
 			notesRepo.deleteAll();
