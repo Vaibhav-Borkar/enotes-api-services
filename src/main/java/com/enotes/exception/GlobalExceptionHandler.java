@@ -105,5 +105,10 @@ public class GlobalExceptionHandler {
 		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.FORBIDDEN);
 	}
 	
+	@ExceptionHandler(PasswordMismatchException.class)
+	public ResponseEntity<?> handlePasswordMismatchException(PasswordMismatchException e){
+		log.info("PasswordMismatchException :: PasswordMismatchException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.FORBIDDEN);
+	}
 	
 }
