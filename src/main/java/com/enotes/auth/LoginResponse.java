@@ -1,6 +1,6 @@
 package com.enotes.auth;
 
-import com.enotes.user.UserRequest;
+import com.enotes.user.UserResponse;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,7 +14,7 @@ import lombok.Setter;
 @Builder
 public class LoginResponse {
 
-	private UserRequest user;
+	private UserResponse user;
 	
 	private String token;
 	

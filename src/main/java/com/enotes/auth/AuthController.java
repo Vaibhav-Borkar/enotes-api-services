@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.enotes.user.UserRequest;
-import com.enotes.user.UserService;
+import com.enotes.user.AuthService;
 import com.enotes.utils.CommonUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,12 +21,12 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class AuthController {
 
-	private final UserService userService;
+	private final AuthService authService;
 		
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@RequestBody UserRequest userDto,HttpServletRequest req) throws Exception{
 		String url = CommonUtil.getUrl(req);
-		Boolean register = userService.register(userDto,url);
+		Boolean register = authService.register(userDto,url);
 		if(register) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
 		}
@@ -35,7 +35,7 @@ public class AuthController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> loginUserHandler(@RequestBody LoginRequest req){
-		LoginResponse loginUser = userService.loginUser(req);
+		LoginResponse loginUser = authService.loginUser(req);
 		if(ObjectUtils.isEmpty(loginUser)) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.BAD_REQUEST, "invalid credentials");
 		}
