@@ -111,4 +111,21 @@ public class GlobalExceptionHandler {
 		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.FORBIDDEN);
 	}
 	
+	@ExceptionHandler(UserNotFoundException.class)
+	public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e){
+		log.info("UserNotFoundException :: UserNotFoundException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.NOT_FOUND);
+	}
+	
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<?> handleIllegalArgumentException(IllegalArgumentException e){
+		log.info("IllegalArgumentException :: IllegalArgumentException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.BAD_REQUEST);
+	}
+	
+	@ExceptionHandler(PasswordException.class)
+	public ResponseEntity<?> handlePasswordException(PasswordException e){
+		log.info("PasswordException :: PasswordException");
+		return  CommonUtil.createErrorResponse(e.getMessage(),HttpStatus.BAD_REQUEST);
+	}
 }

@@ -27,6 +27,7 @@ public class HomeServiceImpl implements HomeService {
 			AccountStatus status = user.getStatus();
 			status.setIsActive(true);
 			status.setVerificationCode(null);
+			
 			userRepo.save(user);
 			return true;
 		}

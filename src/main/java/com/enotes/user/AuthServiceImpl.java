@@ -51,13 +51,13 @@ public class AuthServiceImpl implements AuthService {
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		User save = userRepo.save(user);
 		if (!ObjectUtils.isEmpty(save)) {
-			emailSend(save, url);
+			emailSendForRegister(save, url);
 			return true;
 		}
 		return false;
 	}
 
-	private void emailSend(User user, String url) throws Exception {
+	private void emailSendForRegister(User user, String url) throws Exception {
 		String message = "<html><body>"
 				+ "<div style='font-family: Arial, Helvetica, sans-serif; background-color: #ffffff; padding: 20px;'>"
 				+ "<div style='max-width: 600px; margin: auto; background-color: #f4f6f9; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;'>"

@@ -45,8 +45,7 @@ public class User {
 	
 	private String password;
 
-	
-//	@OneToMany(cascade = CascadeType.ALL) 
+
 	@ManyToMany(fetch = FetchType.EAGER)
 	@JsonManagedReference
     @JoinTable(
@@ -55,7 +54,6 @@ public class User {
         inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private List<Role> roles = new ArrayList<>();
-//	private List<Role> roles;
 	
 	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.EAGER)
 	@JoinColumn(name = "status_id")
