@@ -1,15 +1,11 @@
 package com.enotes.utils;
 
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import com.enotes.GenericResponse;
 import com.enotes.security.CustomUserDetails;
 import com.enotes.user.User;
-import com.enotes.user.UserResponse;
-
 import jakarta.servlet.http.HttpServletRequest;
 
 public class CommonUtil {

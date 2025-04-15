@@ -17,15 +17,12 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
 import org.springframework.util.StreamUtils;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.enotes.category.CategoryRepository;
 import com.enotes.exception.ResourceNotFoundException;
 import com.enotes.file.FileDetails;
 import com.enotes.file.FileDetailsRepository;
 import com.enotes.utils.CommonUtil;
 import com.enotes.utils.FileDetailsUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -33,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 public class NotesServiceImpl implements NotesService {
 
 	private final NotesRepository notesRepo;
-	private final CategoryRepository categoryRepo;
 	private final ModelMapper mapper;
 	private final ObjectMapper objectMapper;
 	private final FileDetailsRepository fileDetailsRepo;
@@ -49,7 +45,7 @@ public class NotesServiceImpl implements NotesService {
 		// For checking the provided category is presented or not.
 		fileDetailsUtil.checkCategoryExists(notesDto.getCategory());
 		Notes notesData = mapper.map(notesDto, Notes.class);
-		
+		notesData.setIsDeleted(false);
 		FileDetails fileDetails = fileDetailsUtil.saveFileDetails(file,uploadPath);
 		if (!ObjectUtils.isEmpty(fileDetails)) {
 //			notesData.setFileDetails(fileDetails);
@@ -221,6 +217,27 @@ public class NotesServiceImpl implements NotesService {
 			return true;
 		}
 		return false;
+	}
+
+
+	@Override
+	public NotesResponse getNotesByUserSearch(Integer pageNumber, Integer pageSize,String keyword) {
+		Integer userId=CommonUtil.getLoggedInUser().getId();
+		Pageable pageable = PageRequest.of(pageNumber,pageSize);
+		Page<Notes> pageNotes = notesRepo.searchNotes(keyword,userId,pageable);
+			    
+	    List<NotesDTO> notesDto = pageNotes.get().map(note->mapper.map(note, NotesDTO.class)).toList();
+	    
+	    NotesResponse response = NotesResponse.builder()
+	    		.notes(notesDto)
+	    		.pageNo(pageNotes.getNumber())
+	    		.pageSize(pageNotes.getSize())
+	    		.totalPages(pageNotes.getTotalPages())
+	    		.totalElements(pageNotes.getTotalElements())
+	    		.isFirst(pageNotes.isFirst())
+	    		.isLast(pageNotes.isLast())
+	    		.build();
+		return response;
 	}
 
 }

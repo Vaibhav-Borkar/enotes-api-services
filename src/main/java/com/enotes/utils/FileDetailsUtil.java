@@ -8,13 +8,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-
 import org.apache.commons.io.FilenameUtils;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.enotes.category.Category;
 import com.enotes.category.CategoryRepository;
 import com.enotes.exception.CategoryNotFoundException;
@@ -22,9 +19,7 @@ import com.enotes.exception.UnSupportedFileException;
 import com.enotes.file.FileDetails;
 import com.enotes.file.FileDetailsRepository;
 import com.enotes.notes.NotesDTO.CategoryDTO;
-
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 
 @Component
 @AllArgsConstructor

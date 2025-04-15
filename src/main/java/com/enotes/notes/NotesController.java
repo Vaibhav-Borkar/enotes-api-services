@@ -33,125 +33,120 @@ import lombok.AllArgsConstructor;
 public class NotesController {
 
 	private final NotesService notesService;
-	
+
 	@PostMapping
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> saveNotesHandler(@RequestParam String notes,@RequestParam (required = false)MultipartFile file) throws Exception{
-		Boolean saveNotes = notesService.saveNotes(notes,file);
-		if(saveNotes) {
-			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"notes saved success");
+	public ResponseEntity<?> saveNotesHandler(@RequestParam String notes,
+			@RequestParam(required = false) MultipartFile file) throws Exception {
+		Boolean saveNotes = notesService.saveNotes(notes, file);
+		if (saveNotes) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED, "notes saved success");
 		}
-		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR,"notes not saved");
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "notes not saved");
 	}
-	
+
 	@GetMapping
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> getAllNotesHandler(){
+	public ResponseEntity<?> getAllNotesHandler() {
 		List<NotesDTO> allNotes = notesService.getAllNotes();
-		if(!CollectionUtils.isEmpty(allNotes)) {
+		if (!CollectionUtils.isEmpty(allNotes)) {
 			return CommonUtil.createBuildResponse(allNotes, HttpStatus.OK);
 		}
 		return ResponseEntity.noContent().build();
 	}
-	
+
 	@GetMapping("/download/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> downloadFileHandler(@PathVariable Integer id) throws Exception{
-		  FileDetails details = notesService.getFileDetails(id);
-		  byte[] fileData = notesService.downloadFile(details);
-		  String contentType = FileDetailsUtil.getContentType(details.getOriginalFileName());
-	     HttpHeaders headers = new HttpHeaders(); 
-	     headers.setContentType(MediaType.parseMediaType(contentType));
-	     headers.setContentDispositionFormData("attachment",details.getOriginalFileName());
-	     
-	     return ResponseEntity.ok().headers(headers).body(fileData);
+	public ResponseEntity<?> downloadFileHandler(@PathVariable Integer id) throws Exception {
+		FileDetails details = notesService.getFileDetails(id);
+		byte[] fileData = notesService.downloadFile(details);
+		String contentType = FileDetailsUtil.getContentType(details.getOriginalFileName());
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.parseMediaType(contentType));
+		headers.setContentDispositionFormData("attachment", details.getOriginalFileName());
+
+		return ResponseEntity.ok().headers(headers).body(fileData);
 	}
-	
+
 	@GetMapping("/user-notes")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> getAllNotesByUserHandler(
-		@RequestParam (defaultValue = "0") Integer pageNumber,
-		@RequestParam (defaultValue = "5") Integer pageSize
-			){
-		NotesResponse allNotes = notesService.getAllNotesByUser(pageNumber,pageSize);
-		if(ObjectUtils.isEmpty(allNotes)) {
+	public ResponseEntity<?> getAllNotesByUserHandler(@RequestParam(defaultValue = "0") Integer pageNumber,
+			@RequestParam(defaultValue = "5") Integer pageSize) {
+		NotesResponse allNotes = notesService.getAllNotesByUser(pageNumber, pageSize);
+		if (ObjectUtils.isEmpty(allNotes)) {
 			return CommonUtil.createErrorResponseMessage(HttpStatus.NO_CONTENT, "no content found");
 		}
 		return CommonUtil.createBuildResponse(allNotes, HttpStatus.OK);
 	}
-	
-	
+
 	@PutMapping("/{noteId}")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> updateNoteHandler(@PathVariable Integer noteId ,@RequestBody NotesDTO notesDto){
-	  Boolean result=notesService.updateNote(noteId,notesDto);
-	  if (result) {
-		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "update success");
-	}
+	public ResponseEntity<?> updateNoteHandler(@PathVariable Integer noteId, @RequestBody NotesDTO notesDto) {
+		Boolean result = notesService.updateNote(noteId, notesDto);
+		if (result) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "update success");
+		}
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note id note found");
 	}
-	
-	
+
 	@DeleteMapping("/delete/{noteId}")
 	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> softDeleteNotesHandler(@PathVariable Integer noteId){
-		Boolean result =notesService.softDeleteNotes(noteId);
-		 if (result) {
-			 return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success");
+	public ResponseEntity<?> softDeleteNotesHandler(@PathVariable Integer noteId) {
+		Boolean result = notesService.softDeleteNotes(noteId);
+		if (result) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success");
 		}
-		     return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
-				
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
+
 	}
 
+	@GetMapping("/restore/{noteId}")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?> restoreNotesHandler(@PathVariable Integer noteId) {
+		Boolean result = notesService.restoreNotes(noteId);
+		if (result) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "restore success");
+		}
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
+	}
 
-    @GetMapping ("/restore/{noteId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> restoreNotesHandler(@PathVariable Integer noteId){
-       	Boolean result =notesService.restoreNotes(noteId);
-	     if (result) {
-		      return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"restore success");
-		   }
-			  return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
-    }
-    
-    
-    @GetMapping("/recycle-bin")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> getRecycleBinUserHandler(){
-    	List<NotesDTO> recycledUser = notesService.getRecycleBinUser();
-    	if(CollectionUtils.isEmpty(recycledUser)) {
-    		return CommonUtil.createErrorResponseMessage(HttpStatus.NO_CONTENT, "no user presentec in recycle bin");
-    	}
-    	return CommonUtil.createBuildResponse(recycledUser, HttpStatus.OK);
-    }
-    
-    
-    @PostMapping("/file-upload/{noteId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> uploadFileForNoteHandler(@PathVariable Integer noteId,@RequestParam MultipartFile file) throws IOException{
-    	
-    	Boolean isUploaded=notesService.uploadFileForNote(noteId,file);
-    	if (isUploaded) {
+	@GetMapping("/recycle-bin")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?> getRecycleBinUserHandler() {
+		List<NotesDTO> recycledUser = notesService.getRecycleBinUser();
+		if (CollectionUtils.isEmpty(recycledUser)) {
+			return CommonUtil.createErrorResponseMessage(HttpStatus.NO_CONTENT, "no user presentec in recycle bin");
+		}
+		return CommonUtil.createBuildResponse(recycledUser, HttpStatus.OK);
+	}
+
+	@PostMapping("/file-upload/{noteId}")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?> uploadFileForNoteHandler(@PathVariable Integer noteId, @RequestParam MultipartFile file)
+			throws IOException {
+
+		Boolean isUploaded = notesService.uploadFileForNote(noteId, file);
+		if (isUploaded) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "file uploaded successfully");
 		}
-    	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "file upload failed");
-    }
-    
-    @DeleteMapping("/delete/hard/{noteId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> hardDeleteNotesHandler(@PathVariable Integer noteId){
-        notesService.hardDeleteNotes(noteId);
-        return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success.");
-    }
-    
-    @DeleteMapping("/delete")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> emptyRecycleBinHandler(@PathVariable Integer noteId){
-        notesService.emptyRecycleBin();
-        return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"delete success.");
-    }
-    
-    @GetMapping("/copy/{noteId}")
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "file upload failed");
+	}
+
+	@DeleteMapping("/delete/hard/{noteId}")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?> hardDeleteNotesHandler(@PathVariable Integer noteId) {
+		notesService.hardDeleteNotes(noteId);
+		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success.");
+	}
+
+	@DeleteMapping("/delete")
+	@PreAuthorize("hasRole('USER')")
+	public ResponseEntity<?> emptyRecycleBinHandler(@PathVariable Integer noteId) {
+		notesService.emptyRecycleBin();
+		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success.");
+	}
+
+	@GetMapping("/copy/{noteId}")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<?> copyNoteHandler(@PathVariable Integer noteId){
     	Boolean copyNote = notesService.copyNote(noteId);
@@ -160,7 +155,18 @@ public class NotesController {
     	}
     	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "copy failed . Try again !");
     }
-    
+
+	@GetMapping("/search")
+    public ResponseEntity<?> getNotesByUserSearchHandler(
+    		@RequestParam (defaultValue = "")String keyword,
+    		@RequestParam (defaultValue = "0") Integer pageNumber,
+    		@RequestParam (defaultValue = "5") Integer pageSize)
+    {
+		NotesResponse notes = notesService.getNotesByUserSearch(pageNumber, pageSize, keyword);
+		if(ObjectUtils.isEmpty(notes)) {
+			CommonUtil.createBuildResponseMessage(HttpStatus.NOT_FOUND,"data not found for this ");
+		}
+		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
+    }
+	
 }
-
-

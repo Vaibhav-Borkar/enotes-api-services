@@ -46,7 +46,7 @@ public class UserServiceImpl implements UserService {
 //		 We are getting HttpServletRequest for getting the dynamic port and url from the controller instead of using single static port and url if the url is change the it can also perform as well.
 		log.info("User email for reseting password :{}",email);
 		User user = userRepo.findByEmail(email);
-
+                            
 		if (ObjectUtils.isEmpty(user)) {
 			throw new ResourceNotFoundException("invalid email");
 		}

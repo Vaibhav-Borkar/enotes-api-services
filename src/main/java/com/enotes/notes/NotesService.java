@@ -34,4 +34,7 @@ public interface NotesService {
 	public void emptyRecycleBin();
 
 	public Boolean copyNote(Integer noteId);
+	
+	public NotesResponse getNotesByUserSearch(Integer pageNumber,Integer pageSize,String keyword);
+
 }
