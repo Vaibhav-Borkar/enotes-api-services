@@ -6,7 +6,7 @@ spring:
   application:
     name: Enotes-API-Service
   profiles:
-    active: dev
+    active: test
 server:
   address: 0.0.0.0
 ---
