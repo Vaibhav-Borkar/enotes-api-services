@@ -88,6 +88,7 @@ public class Validation extends TodoValidation{
 		else {
 			Boolean isExists=userRepo.existsByEmail(user.getEmail());
 			if(isExists) {
+				log.error("Validation : categoryValidation() : Email already exists.");
 				throw new DataExistsException("email allready exists");
 			}
 		}

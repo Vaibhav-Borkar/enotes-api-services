@@ -20,12 +20,14 @@ import com.enotes.security.CustomUserDetails;
 import com.enotes.security.JwtService;
 import com.enotes.utils.Validation;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author Vaibhav Borkar
  * @explanation This class provide the implementation for AuthService interface.
  */
 
+@Slf4j
 @Service
 @AllArgsConstructor
 public class AuthServiceImpl implements AuthService {
@@ -41,6 +43,7 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public Boolean register(UserRequest userDto, String url) throws Exception {
+        log.info("AuthServiceImpl : register() : Start");
 		validation.userValidation(userDto);
 		User user = mapper.map(userDto, User.class);
 		setRole(userDto, user);
@@ -49,15 +52,20 @@ public class AuthServiceImpl implements AuthService {
 
 		user.setStatus(accountStatus);
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
+		log.info("AuthServiceImpl : register() : Register user saved in DB successfully");
 		User save = userRepo.save(user);
-		if (!ObjectUtils.isEmpty(save)) {
-			emailSendForRegister(save, url);
-			return true;
+		if (ObjectUtils.isEmpty(save)) {
+			return false;
 		}
-		return false;
+		log.info("AuthServiceImpl : register() : emailSendForRegister() called ");
+		emailSendForRegister(save, url);
+		log.info("AuthServiceImpl : register() : End");
+		return true;
+		
 	}
 
 	private void emailSendForRegister(User user, String url) throws Exception {
+		log.info("AuthServiceImpl : emailSendForRegister() : Start");
 		String message = "<html><body>"
 				+ "<div style='font-family: Arial, Helvetica, sans-serif; background-color: #ffffff; padding: 20px;'>"
 				+ "<div style='max-width: 600px; margin: auto; background-color: #f4f6f9; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); text-align: center;'>"
@@ -73,13 +81,17 @@ public class AuthServiceImpl implements AuthService {
 				+ "<p style='font-size: 14px; color: #7F8C8D;'>Email specialists use Enotes' intuitive tools to design emails for desktop and mobile.</p>"
 				+ "</div>" + "</div>" + "</div>" + "</body></html>";
 
+		log.info("AuthServiceImpl : emailSendForRegister() : Url build successfully");
 		message = message.replace("[[url]]",
 				url + "/api/v1/home/verify?uid=" + user.getId() + "&&code=" + user.getStatus().getVerificationCode());
 
+		log.info("AuthServiceImpl : emailSendForRegister() : Subject message title set successfully");
 		EmailRequest request = EmailRequest.builder().to(user.getEmail()).title("Email Verification")
 				.subject("Please Verify Your Email at Enotes").message(message).build();
 
+		log.info("AuthServiceImpl : emailSendForRegister() : sendEmail() called ");
 		emailService.sendEmail(request);
+		log.info("AuthServiceImpl : emailSendForRegister() : End");
 	}
 
 	private void setRole(UserRequest userDto, User user) {
