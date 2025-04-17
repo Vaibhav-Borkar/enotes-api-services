@@ -1,0 +1,174 @@
+# Important if we have any wrong configuration in dev profile like database name is wrong 
+# you not using dev profile , you using prod profile then in this case you dont get and error
+# because dev configuration is not checked.
+
+spring:
+  application:
+    name: Enotes-API-Service
+  profiles:
+    active: test
+server:
+  address: 0.0.0.0
+---
+# DEV environment configuration (---) used for separator in yml file.
+
+spring:
+  config:
+    activate:
+      on-profile: dev
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_dev?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Root@1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: businesswithchitti@gmail.com
+    password: wzuqeaegivjgwmdy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+file:
+  upload:
+    path: notes/
+
+---
+# TEST environment configuration
+
+spring:
+  config:
+    activate:
+      on-profile: test
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_test?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Root@1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: businesswithchitti@gmail.com
+    password: wzuqeaegivjgwmdy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+file:
+  upload:
+    path: notes/
+
+---
+# UAT environment configuration
+spring:
+  config:
+    activate:
+      on-profile: uat
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_uat?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Root@1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: businesswithchitti@gmail.com
+    password: wzuqeaegivjgwmdy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+file:
+  upload:
+    path: notes/
+
+
+---
+# PROD environment configuration
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/enotes_prod?useSSL=false&serverTimezone=UTC
+    username: root
+    password: Root@1234
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    database-platform: org.hibernate.dialect.MySQL8Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: businesswithchitti@gmail.com
+    password: wzuqeaegivjgwmdy
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
+
+file:
+  upload:
+    path: notes/
