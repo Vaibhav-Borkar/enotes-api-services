@@ -14,7 +14,9 @@ import com.enotes.utils.CommonUtil;
 
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/home")
 @AllArgsConstructor
@@ -25,10 +27,12 @@ public class HomeController {
 	
 	@GetMapping("/verify")
 	public ResponseEntity<?> verifyAccountHandler(@RequestParam Integer uid ,@RequestParam String code){
+		log.info("HomeController : verifyAccountHandler() : Execution start");
 		Boolean isVerified = homeService.verifyAccount(uid, code);
 		if(isVerified) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.OK,"account verified successfully");
 		}
+		log.info("HomeController : verifyAccountHandler() : Execution end");
 		return CommonUtil.createErrorResponseMessage(HttpStatus.BAD_REQUEST	,"invalid verification link");	
 	}
 

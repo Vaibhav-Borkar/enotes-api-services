@@ -12,7 +12,9 @@ import com.enotes.user.AuthService;
 import com.enotes.utils.CommonUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/v1/auth")
 @AllArgsConstructor
@@ -22,12 +24,15 @@ public class AuthController {
 		
 	@PostMapping("/register")
 	public ResponseEntity<?> registerUser(@RequestBody UserRequest userDto,HttpServletRequest req) throws Exception{
+		log.info("AuthController : registerUser() : Start");
 		String url = CommonUtil.getUrl(req);
 		Boolean register = authService.register(userDto,url);
-		if(register) {
-			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
+		if(!register) {
+			log.error("AuthController : registerUser() : User registration failed .");
+			return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "registeration failed");
 		}
-		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "registeration failed");
+		log.info("AuthController : registerUser() : End");
+		return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
 	}
 	
 	@PostMapping("/login")
