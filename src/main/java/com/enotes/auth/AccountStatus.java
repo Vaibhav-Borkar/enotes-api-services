@@ -1,3 +1,8 @@
+/**
+ * @author Vaibhav Borkar
+ * @explanation This class responsible for handling the user account status.Like user account status is active or not user email verification code and many more things.
+ */
+
 package com.enotes.auth;
 
 import jakarta.persistence.Entity;

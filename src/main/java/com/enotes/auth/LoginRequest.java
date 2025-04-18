@@ -1,3 +1,8 @@
+/**
+ * @author Vaibahv Borkar
+ * @explanation This class contains the login request formate entity .
+ */
+
 package com.enotes.auth;
 
 import lombok.AllArgsConstructor;

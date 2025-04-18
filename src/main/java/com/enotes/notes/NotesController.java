@@ -2,42 +2,27 @@ package com.enotes.notes;
 
 import java.io.IOException;
 import java.util.List;
-
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
 import com.enotes.file.FileDetails;
 import com.enotes.utils.CommonUtil;
 import com.enotes.utils.FileDetailsUtil;
-
 import lombok.AllArgsConstructor;
 
 @RestController
-@RequestMapping("/api/v1/notes")
 @AllArgsConstructor
-public class NotesController {
+public class NotesController implements NoteEndpoint {
 
 	private final NotesService notesService;
 
-	@PostMapping
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> saveNotesHandler(@RequestParam String notes,
-			@RequestParam(required = false) MultipartFile file) throws Exception {
+	@Override
+	public ResponseEntity<?> saveNotesHandler(String notes, MultipartFile file) throws Exception {
 		Boolean saveNotes = notesService.saveNotes(notes, file);
 		if (saveNotes) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED, "notes saved success");
@@ -45,8 +30,7 @@ public class NotesController {
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "notes not saved");
 	}
 
-	@GetMapping
-	@PreAuthorize("hasRole('USER')")
+	@Override
 	public ResponseEntity<?> getAllNotesHandler() {
 		List<NotesDTO> allNotes = notesService.getAllNotes();
 		if (!CollectionUtils.isEmpty(allNotes)) {
@@ -55,9 +39,8 @@ public class NotesController {
 		return ResponseEntity.noContent().build();
 	}
 
-	@GetMapping("/download/{id}")
-	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<?> downloadFileHandler(@PathVariable Integer id) throws Exception {
+	@Override
+	public ResponseEntity<?> downloadFileHandler(Integer id) throws Exception {
 		FileDetails details = notesService.getFileDetails(id);
 		byte[] fileData = notesService.downloadFile(details);
 		String contentType = FileDetailsUtil.getContentType(details.getOriginalFileName());
@@ -68,10 +51,8 @@ public class NotesController {
 		return ResponseEntity.ok().headers(headers).body(fileData);
 	}
 
-	@GetMapping("/user-notes")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> getAllNotesByUserHandler(@RequestParam(defaultValue = "0") Integer pageNumber,
-			@RequestParam(defaultValue = "5") Integer pageSize) {
+	@Override
+	public ResponseEntity<?> getAllNotesByUserHandler(Integer pageNumber, Integer pageSize) {
 		NotesResponse allNotes = notesService.getAllNotesByUser(pageNumber, pageSize);
 		if (ObjectUtils.isEmpty(allNotes)) {
 			return CommonUtil.createErrorResponseMessage(HttpStatus.NO_CONTENT, "no content found");
@@ -79,9 +60,8 @@ public class NotesController {
 		return CommonUtil.createBuildResponse(allNotes, HttpStatus.OK);
 	}
 
-	@PutMapping("/{noteId}")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> updateNoteHandler(@PathVariable Integer noteId, @RequestBody NotesDTO notesDto) {
+	@Override
+	public ResponseEntity<?> updateNoteHandler(Integer noteId, NotesDTO notesDto) {
 		Boolean result = notesService.updateNote(noteId, notesDto);
 		if (result) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "update success");
@@ -89,9 +69,8 @@ public class NotesController {
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note id note found");
 	}
 
-	@DeleteMapping("/delete/{noteId}")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> softDeleteNotesHandler(@PathVariable Integer noteId) {
+	@Override
+	public ResponseEntity<?> softDeleteNotesHandler(Integer noteId) {
 		Boolean result = notesService.softDeleteNotes(noteId);
 		if (result) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success");
@@ -100,9 +79,8 @@ public class NotesController {
 
 	}
 
-	@GetMapping("/restore/{noteId}")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> restoreNotesHandler(@PathVariable Integer noteId) {
+	@Override
+	public ResponseEntity<?> restoreNotesHandler(Integer noteId) {
 		Boolean result = notesService.restoreNotes(noteId);
 		if (result) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "restore success");
@@ -110,8 +88,7 @@ public class NotesController {
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "note deletion failed ! ");
 	}
 
-	@GetMapping("/recycle-bin")
-	@PreAuthorize("hasRole('USER')")
+	@Override
 	public ResponseEntity<?> getRecycleBinUserHandler() {
 		List<NotesDTO> recycledUser = notesService.getRecycleBinUser();
 		if (CollectionUtils.isEmpty(recycledUser)) {
@@ -120,10 +97,8 @@ public class NotesController {
 		return CommonUtil.createBuildResponse(recycledUser, HttpStatus.OK);
 	}
 
-	@PostMapping("/file-upload/{noteId}")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> uploadFileForNoteHandler(@PathVariable Integer noteId, @RequestParam MultipartFile file)
-			throws IOException {
+	@Override
+	public ResponseEntity<?> uploadFileForNoteHandler(Integer noteId, MultipartFile file) throws IOException {
 
 		Boolean isUploaded = notesService.uploadFileForNote(noteId, file);
 		if (isUploaded) {
@@ -132,41 +107,34 @@ public class NotesController {
 		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "file upload failed");
 	}
 
-	@DeleteMapping("/delete/hard/{noteId}")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> hardDeleteNotesHandler(@PathVariable Integer noteId) {
+	@Override
+	public ResponseEntity<?> hardDeleteNotesHandler(Integer noteId) {
 		notesService.hardDeleteNotes(noteId);
 		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success.");
 	}
 
-	@DeleteMapping("/delete")
-	@PreAuthorize("hasRole('USER')")
-	public ResponseEntity<?> emptyRecycleBinHandler(@PathVariable Integer noteId) {
+	@Override
+	public ResponseEntity<?> emptyRecycleBinHandler(Integer noteId) {
 		notesService.emptyRecycleBin();
 		return CommonUtil.createBuildResponseMessage(HttpStatus.OK, "delete success.");
 	}
 
-	@GetMapping("/copy/{noteId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> copyNoteHandler(@PathVariable Integer noteId){
-    	Boolean copyNote = notesService.copyNote(noteId);
-    	if(copyNote) {
-    		return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"copied success");   		
-    	}
-    	return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "copy failed . Try again !");
-    }
+	@Override
+	public ResponseEntity<?> copyNoteHandler(Integer noteId) {
+		Boolean copyNote = notesService.copyNote(noteId);
+		if (copyNote) {
+			return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED, "copied success");
+		}
+		return CommonUtil.createErrorResponseMessage(HttpStatus.INTERNAL_SERVER_ERROR, "copy failed . Try again !");
+	}
 
-	@GetMapping("/search")
-    public ResponseEntity<?> getNotesByUserSearchHandler(
-    		@RequestParam (defaultValue = "")String keyword,
-    		@RequestParam (defaultValue = "0") Integer pageNumber,
-    		@RequestParam (defaultValue = "5") Integer pageSize)
-    {
+	@Override
+	public ResponseEntity<?> getNotesByUserSearchHandler(String keyword, Integer pageNumber, Integer pageSize) {
 		NotesResponse notes = notesService.getNotesByUserSearch(pageNumber, pageSize, keyword);
-		if(ObjectUtils.isEmpty(notes)) {
-			CommonUtil.createBuildResponseMessage(HttpStatus.NOT_FOUND,"data not found for this ");
+		if (ObjectUtils.isEmpty(notes)) {
+			CommonUtil.createBuildResponseMessage(HttpStatus.NOT_FOUND, "data not found for this ");
 		}
 		return CommonUtil.createBuildResponse(notes, HttpStatus.OK);
-    }
-	
+	}
+
 }

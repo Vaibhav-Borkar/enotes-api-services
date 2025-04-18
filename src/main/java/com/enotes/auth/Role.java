@@ -1,3 +1,8 @@
+/**
+ * @author Vaibhav Borkar
+ * @explanation Most important class for managing the user roles and there access in the application.
+ */
+
 package com.enotes.auth;
 
 import java.util.ArrayList;

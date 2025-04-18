@@ -1,11 +1,13 @@
+/**
+ * @author Vaibhav Borkar
+ * @explanation This class contains the login and register api logic 
+ */
+
 package com.enotes.auth;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.ObjectUtils;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import com.enotes.user.UserRequest;
 import com.enotes.user.AuthService;
@@ -16,14 +18,13 @@ import lombok.extern.slf4j.Slf4j;
 
 @Slf4j
 @RestController
-@RequestMapping("/api/v1/auth")
 @AllArgsConstructor
-public class AuthController {
+public class AuthController implements AuthEndpoint {
 
 	private final AuthService authService;
 		
-	@PostMapping("/register")
-	public ResponseEntity<?> registerUser(@RequestBody UserRequest userDto,HttpServletRequest req) throws Exception{
+	@Override
+	public ResponseEntity<?> registerUser(UserRequest userDto,HttpServletRequest req) throws Exception{
 		log.info("AuthController : registerUser() : Start");
 		String url = CommonUtil.getUrl(req);
 		Boolean register = authService.register(userDto,url);
@@ -35,8 +36,8 @@ public class AuthController {
 		return CommonUtil.createBuildResponseMessage(HttpStatus.CREATED,"user registered successfully");
 	}
 	
-	@PostMapping("/login")
-	public ResponseEntity<?> loginUserHandler(@RequestBody LoginRequest req){
+	@Override
+	public ResponseEntity<?> loginUserHandler( LoginRequest req){
 		LoginResponse loginUser = authService.loginUser(req);
 		if(ObjectUtils.isEmpty(loginUser)) {
 			return CommonUtil.createBuildResponseMessage(HttpStatus.BAD_REQUEST, "invalid credentials");

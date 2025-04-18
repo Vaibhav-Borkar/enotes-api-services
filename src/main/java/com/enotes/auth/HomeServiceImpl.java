@@ -1,3 +1,8 @@
+/**
+ * @author Vaibhav Borkar
+ * @explanation This class contains the service logic implementation for HomeController 
+ */
+
 package com.enotes.auth;
 
 import org.springframework.stereotype.Service;

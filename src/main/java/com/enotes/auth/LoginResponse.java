@@ -1,3 +1,8 @@
+/**
+ * @author Vaibhav Borkar
+ * @explanation This class work as a data transfer object means how much data will be sent to the use after login.
+ */
+
 package com.enotes.auth;
 
 import com.enotes.user.UserResponse;
