@@ -1,6 +1,7 @@
 # Important if we have any wrong configuration in dev profile like database name is wrong 
 # you not using dev profile , you using prod profile then in this case you dont get and error
 # because dev configuration is not checked.
+# Specifing the port for [ dev : 8080 test : 8081 uat : 8082 prod : 8083  ]
 
 spring:
   application:
@@ -8,8 +9,11 @@ spring:
   profiles:
     active: dev
 server:
-  address: 0.0.0.0
+  address: 0.0.0.0	
+
+
 ---
+
 # DEV environment configuration (---) used for separator in yml file.
 
 spring:
@@ -46,11 +50,25 @@ spring:
       max-file-size: 100MB
       max-request-size: 100MB
 
+springdoc:
+  swagger-ui:
+    operationsSorter: method
+    tags-sorter: alpha
+    path: /enotes-docs
+  api-docs:
+    path: /enotes-api-docs
+
+
 file:
   upload:
     path: notes/
 
+server:
+  port: 8080
+
+
 ---
+
 # TEST environment configuration
 
 spring:
@@ -91,8 +109,14 @@ file:
   upload:
     path: notes/
 
+server:
+  port: 8081
+
+
 ---
+
 # UAT environment configuration
+
 spring:
   config:
     activate:
@@ -131,8 +155,12 @@ file:
   upload:
     path: notes/
 
+server:
+  port: 8082
+
 
 ---
+
 # PROD environment configuration
 
 spring:
@@ -172,3 +200,6 @@ spring:
 file:
   upload:
     path: notes/
+
+server:
+  port: 8083

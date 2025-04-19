@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 
 @RestController
 @AllArgsConstructor
-public class NotesController implements NoteEndpoint {
+public class NotesController implements NotesEndpoint {
 
 	private final NotesService notesService;
 
